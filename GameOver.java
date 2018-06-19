@@ -1,18 +1,23 @@
 import javax.swing.*;
 import java.awt.*;
 
+
+//When player reaches 0 life, create GameOver panel that displays score
 public class GameOver extends JPanel{
    
    private int score ;
    private Image image = new ImageIcon(this.getClass().getResource("GameOverBackground.png")).getImage();   
+
+//Create the GameOver Panel   
    public GameOver(int score){
       setBackground(new Color(98,44,12));
       setFocusable(true);
-      setBounds(145,200,400,300);  //size of the GamveOver Panel
+      setBounds(145,200,400,300);  
       this.score = score;
       setLayout(null);
    }
-   
+
+//Paint the lines on screen   
    public void paintComponent(Graphics g){
      super.paintComponent(g);
      g.drawImage(image,0,0,this);

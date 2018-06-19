@@ -1,19 +1,20 @@
 import javax.swing.ImageIcon; 
 import java.awt.*;
 
+//Fire object information, has movements
 public class Fire extends Base_Object{
    
    boolean left = true;
    boolean down = true;
    
-  
+ //Create Fire 
    public Fire(){
       image = new ImageIcon(this.getClass().getResource("fire.png")).getImage();
       this.w = image.getWidth(null);
       this.h = image.getHeight(null);
    }
    
-   //move
+//Add/Sub x/y coordinate, bounce off when reach bounds
    public void addX(){
       if(left){
          this.x++;
@@ -37,7 +38,7 @@ public class Fire extends Base_Object{
          }
       }else{
          this.y--;
-         if(this.y==50){
+         if(this.y==45){
             down = true;
          }
       }

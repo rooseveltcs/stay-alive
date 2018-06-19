@@ -1,11 +1,13 @@
 import java.awt.*;
 
+//Base_object class standard information for all objects
 public class Base_Object{
    
    int x, y, h,w;
    Image image;
    
    public Base_Object(){
+      //Randomize the coordinates
       this.x = (int)(Math.random()*600)+1;
       this. y= (int)(Math.random()*470)+50;
       if(y+h >700){
@@ -31,7 +33,9 @@ public class Base_Object{
    public Image getImage(){
       return this.image;
    }
-   
+
+//Take in coordinates and size of the player iamge, test weather or noth this corssed over with it
+//Return trueif touched   
    public boolean test(int pX , int pY, int pW , int pH, int adj){  //+ = top and left
                                                                     //- = right and bot
    

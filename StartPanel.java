@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 
+
+//When the program runs, it will create a StartPanel
 public class StartPanel extends JPanel{
    
    private int score ;
@@ -19,13 +21,14 @@ public class StartPanel extends JPanel{
    
    public void paintComponent(Graphics g){
      super.paintComponent(g);
-     
+     //Draw the title
      g.setColor(Color.WHITE);
      g.setFont(new Font("Algerian", Font.PLAIN, 90));
      String title = "Stay Alive!";
      int titleLength = g.getFontMetrics().stringWidth(title); 
      g.drawString(title, (690/2)-(titleLength/2),150);
      
+     //Draw the fire images
      g.drawImage(fireImageS,(690/2)-(w*4)+10,260,this);
      g.drawImage(fireImageS,(690/2)+(w*3-10),260,this);
      
@@ -34,6 +37,7 @@ public class StartPanel extends JPanel{
      
      g.drawImage(fireImageL,(690/2)-(w*3/2),210,this);
      
+     //Draw the Click line
      g.setColor(Color.WHITE);
      g.setFont(new Font("Arial", Font.BOLD, 30)); 
      int startLine = g.getFontMetrics().stringWidth("Click to Start!");

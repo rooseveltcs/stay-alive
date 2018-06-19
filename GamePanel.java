@@ -4,24 +4,25 @@ import javax.swing.*;
 import java.util.*;
 
 
-
+//GamePanel where everything is on
 public class GamePanel extends JPanel{
    
    private Player player ;
    boolean key_right, key_left, key_down, key_up; 
-   private ArrayList<Fire> fireRecord = new ArrayList<Fire>(); 
-   private ArrayList<Heart> hearts = new ArrayList<Heart>();
-   private ArrayList<Water> waters = new ArrayList<Water>();
-   private int initScore, moveCount;
+   private ArrayList<Fire> fireRecord = new ArrayList<Fire>();  //array to store fire(s)
+   private ArrayList<Heart> hearts = new ArrayList<Heart>();    //array to store heart(s)
+   private ArrayList<Water> waters = new ArrayList<Water>();    //array to store water(s)
+   private int initScore, moveCount, waterCap, heartScore;
    private Image barImage  = new ImageIcon(this.getClass().getResource("Bar.png")).getImage(); 
-   private boolean delay;
-   private int click = 0;
-   private boolean ended = false;
-   private boolean atStartPanel = true;
-   private int heartScore = 1;
-   private int waterCap =0;
+   private boolean delay;              //If true, player will not take damage
+   private int click = 0; 
+   private boolean ended = false;       //If ture, do not paint anything
+   private boolean atStartPanel = true; //If ture, the game will not start
    private int speedAdj = 20;
    
+   private Image lifeImage = new ImageIcon(this.getClass().getResource("HeartImage.png")).getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT);
+   
+//CREATE A GAMEPANEL
    public GamePanel(){
       this.addKeyListener(new GameInput());
       addMouseListener(new MouseInput()); 
@@ -32,33 +33,33 @@ public class GamePanel extends JPanel{
       setDoubleBuffered(true);
       this.setFocusable(true);
       
-      this.add(new StartPanel()); //START WITH A START MENUE
+      this.add(new StartPanel()); //START WITH A STARTPANEL
    }
-//////////////////////////////////////////////////////////////   
-////////////////////START A NEW GAME/////////////////////////////   
+
+//START A NEW GAME   
    public void newGame(){
-      fireRecord.clear();
-      hearts.clear();
+      fireRecord.clear();  //Clear all arrays
+      hearts.clear();   
       waters.clear();
       player = new Player();
       fireRecord.add(new Fire());
        
       delay = false;
-      initScore= 0;
+      initScore= 0;   //reset all variables
       moveCount = 0;
-      heartScore = 0;
+      heartScore = 1;
       waterCap = 0;
    }
-////////////////////////////////////////////////////////////   
-//////REMOVE GAMVEOVE, START A NEW GAME///////////////////////      
+   
+//REMOVE GAMVEOVER PANEL, START A NEW GAME      
    public void reset(){
       newGame();
       removeAll();
       repaint();
       ended = false;
    } 
-////////////////////////////////////////////////////////////////
-/////////////////PAINT COMPONENTS ON THE PANEL///////////////   
+
+//PAINT COMPONENTS ON THE PANEL  
    public void paintComponent(Graphics g){
       super.paintComponent(g); 
       g.drawImage(barImage,0,0,this);
@@ -66,7 +67,7 @@ public class GamePanel extends JPanel{
       if(atStartPanel){ //default true, change to false if clicked once
          this.add(new StartPanel());
       }
-      else{      //Start the game
+      else{      //Start the game when the player clicks once in the start panel
          if(!ended){   
             if(delay){ 
                drawPlayer(g, player.getImage2()); 
@@ -86,21 +87,23 @@ public class GamePanel extends JPanel{
             this.add(new GameOver(player.getScore())); 
             ended = true;  
          }
-      }
-      
-        
-   }  
-////////////////////////////////////////////////// 
-/////////////////REPAINT PLAYER AND THE OBJECTS///////////////
+      }    
+   }
+     
+//REPAINT PLAYER AND THE OBJECTS
    private void drawPlayer(Graphics g, Image playerImage){
        
       g.setColor(Color.WHITE);
       g.setFont(new Font("Arial", Font.PLAIN, 20)); 
       g.drawString(""+player.getScore(),25,23);
-      g.drawString(""+player.getLives(),600,23);
+      
+      for(int i= 0; i<player.getLives(); i++){
+         g.drawImage(lifeImage,600-i*30,5,this);
+         }
       
       g.drawImage(playerImage, player.getX(), player.getY(), this); 
       
+      //Limit the players movement within the bound. Add score when moving
         
       if (key_down && player.getY()<620)  {
          player.addY();
@@ -126,8 +129,8 @@ public class GamePanel extends JPanel{
       repaint();
          
    }
-//////////////////////////////////////////////////////////
-/////////////REPAINT EACH FIRE AND TEST////////////////////   
+
+//REPAINT EACH FIRE AND TEST   
    public void drawFire(Graphics g){
       
       if(player.getScore()>= initScore+1000){
@@ -137,7 +140,7 @@ public class GamePanel extends JPanel{
       
       for(int i=0; i<fireRecord.size(); i++){
          Fire current = fireRecord.get(i);
-         boolean test = current.test(player.getX(), player.getY(), player.getW(), player.getH(),5);       
+         boolean test = current.test(player.getX(), player.getY(), player.getW(), player.getH(),-5);       
          if(!delay){
             if(test){
                player.loseLife();
@@ -152,15 +155,12 @@ public class GamePanel extends JPanel{
          if(moveCount%speedAdj==0){ //Adjust Speed
             current.addX();
             current.addY();
-                
          }
          g.drawImage(current.getImage(), current.getX(), current.getY(), this); 
-      
-      }  
-           
+      }       
    }
-////////////////////////////////////////////////////////////////////   
-////////////REPAINT HEARTS AND TEST////////////////////////////////
+
+//REPAINT HEARTS AND TEST
    public void drawHearts(Graphics g){
       
       if(player.getScore()>= 10000*heartScore ){
@@ -171,7 +171,7 @@ public class GamePanel extends JPanel{
       for(int i=0; i<hearts.size(); i++){
          Heart currentHeart = hearts.get(i);
          boolean test = currentHeart.test(player.getX(), player.getY(), player.getW(), player.getH(),-5);       
-         
+         //If touched add a life, if player has 3 lives, do nothing
          if(test){
             if(player.getLives()<3){
                player.addLife();
@@ -185,8 +185,8 @@ public class GamePanel extends JPanel{
       }  
            
    }
-////////////////////////////////////////////////////////////////
-//////////////////REPAINT WATER AND TEST///////////////////////
+   
+//REPAINT WATER AND TEST
    public void drawWaters(Graphics g){
       
       if(fireRecord.size() > 20+ (waterCap*3)){
@@ -197,7 +197,7 @@ public class GamePanel extends JPanel{
       for(int i=0; i<waters.size(); i++){
          Water currentWater = waters.get(i);
          boolean test = currentWater.test(player.getX(), player.getY(), player.getW(), player.getH(),-5);       
-         
+         //If touched, remove some of the fire.
          if(test){
             if(fireRecord.size()>5){
                for(int k = 1; k<=5 ; k++){
@@ -213,8 +213,8 @@ public class GamePanel extends JPanel{
          g.drawImage(currentWater.getImage(), currentWater.getX(), currentWater.getY(), this); 
       }         
    }       
-///////////////////////////////////////////////////////////
-/////////////PRIVATE KEY LISTENER FOR THE PLAYER///////////
+
+//PRIVATE KEY LISTENER FOR THE PLAYER, ARROW KEYS CONTROL
    private class GameInput implements KeyListener {  
       public void keyTyped(KeyEvent e) {}
       
@@ -233,9 +233,7 @@ public class GamePanel extends JPanel{
       }
    }
     
-    
-///////////////////////////////////////////////////////////
-///////////PRIVATE MOUSE LISTENER FOR THE PLAYER///////////
+//PRIVATE MOUSE LISTENER FOR THE PLAYER
    private class MouseInput implements MouseListener{
       public void mouseExited(MouseEvent e){}
       public void mouseEntered(MouseEvent e){}
@@ -243,12 +241,12 @@ public class GamePanel extends JPanel{
       public void mousePressed(MouseEvent e){}
       
       public void mouseClicked(MouseEvent e){
-         if(atStartPanel){
+         if(atStartPanel){    //When the StartPanel is displayed,
             atStartPanel = false;
             reset();
          }
             
-         if(ended && !atStartPanel){
+         if(ended && !atStartPanel){ //When GamveOver panel is displayed
             click ++;
             if(click ==2){
                reset();

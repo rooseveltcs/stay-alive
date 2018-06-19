@@ -1,6 +1,7 @@
 import javax.swing.ImageIcon; 
 import java.awt.*;
 
+//Player class, storing player information 
 public class Player{
    
    private Image image1 =  new ImageIcon(this.getClass().getResource("PlayerIcon1.png")).getImage().getScaledInstance(30, 30, Image.SCALE_DEFAULT); 
@@ -76,23 +77,28 @@ public class Player{
          this.y--;
       } 
    }
-   
+  
+//Return score of the player   
    public int getScore(){
       return this.score;
    }
    
+//Add one to the score    
    public void addScore(){
       this.score++;
    } 
-
+   
+//Subtract one life
    public void loseLife(){
       this.lives--;
    }
-  
+   
+//Add one life  
    public void addLife(){
       this.lives++;
    }
    
+//Return lives of the player   
    public int getLives(){
       return this.lives;
    }             

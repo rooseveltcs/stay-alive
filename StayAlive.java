@@ -1,6 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
 
+//Main run 
+/*Stay Alive! is a game where the player tries to stay alive as long as possible and gaining the most amount of score
+/ The player gain score by moving with arrow keys.
+/ If the player touches fire, player will lose a life and become invulunable for a period of time
+/ Player could collect Items
+/     - Heart to gain 1 life, lives are capped at 3
+/     - Water to remove some of the fire 
+*/
 public class StayAlive extends JFrame{
   
    private Image gameIcon = new ImageIcon(this.getClass().getResource("GameIcon.png")).getImage(); 
